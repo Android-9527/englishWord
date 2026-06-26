@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "划词翻译并推送背单词",
+  "version": "0.1",
+  "description": "选中文本自动翻译并把单词与句子发送到背单词后端（占位URL，可在扩展选项中修改）。",
+  "permissions": ["storage", "notifications", "scripting", "activeTab", "contextMenus"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html"
+}

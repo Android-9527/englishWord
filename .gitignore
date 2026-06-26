@@ -1,0 +1,14 @@
+node_modules/
+dist/
+__pycache__/
+*.pyc
+.venv/
+.env
+.DS_Store
+chrome_extension/*.pem
+wordlist/backend/wordlist.db
+wordlist/frontend/node_modules/
+wordlist/frontend/dist/
+wordlist/frontend/.env
+wordlist/backend/.venv/
+wordlist/backend/__pycache__/
