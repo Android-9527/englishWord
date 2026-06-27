@@ -4,9 +4,9 @@ const DEFAULTS = {
 };
 const MENU_ID = 'analyse-selection';
 const BACKEND_BASE_URLS = [
+  'http://136.117.65.65/englishword/api',
   'http://127.0.0.1:5000/api',
-  'http://localhost:5000/api',
-  'http://192.168.0.168:5000/api'
+  'http://localhost:5000/api'
 ];
 
 async function getSettings() {
