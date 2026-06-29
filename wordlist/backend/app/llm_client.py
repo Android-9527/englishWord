@@ -53,7 +53,7 @@ def _translate_selection_cached(api_key: str, selection_text: str, sentence_text
 
     prompt = (
         '只返回JSON：{"selection_meaning":"...","sentence_meaning":"..."}。'
-        '根据选中内容和句子翻译含义。'
+        '根据选中内容和句子的中文翻译含义。'
         f'选中: {selection_text}\n'
         f'句子: {sentence_text}'
     )

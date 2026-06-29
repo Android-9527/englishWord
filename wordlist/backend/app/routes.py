@@ -117,6 +117,70 @@ def list_relations():
     return jsonify({'items': items, 'u_id': user_id})
 
 
+@api_bp.delete('/relations/<int:relation_id>')
+def delete_relation(relation_id):
+    user_id = _get_user_id()
+    user_relation = UserRelation.query.filter_by(u_id=user_id, r_id=relation_id).first()
+
+    if user_relation is None:
+        return jsonify({'error': 'relation not found'}), 404
+
+    try:
+        db.session.delete(user_relation)
+
+        remaining_users = UserRelation.query.filter_by(r_id=relation_id).count()
+        if remaining_users == 0:
+            relation = Relation.query.get(relation_id)
+            if relation is not None:
+                db.session.delete(relation)
+
+        db.session.commit()
+        return jsonify({'success': True, 'relation_id': relation_id})
+    except Exception as exc:
+        db.session.rollback()
+        return jsonify({'error': str(exc)}), 500
+
+
+@api_bp.post('/relations/delete')
+def delete_relations_bulk():
+    data = _json_data()
+    user_id = _get_user_id(data)
+    raw_ids = data.get('relation_ids') or data.get('ids') or []
+
+    if isinstance(raw_ids, int):
+        raw_ids = [raw_ids]
+
+    try:
+        relation_ids = [int(item) for item in raw_ids]
+    except (TypeError, ValueError):
+        return jsonify({'error': 'relation_ids must be a list of integers'}), 400
+
+    if not relation_ids:
+        return jsonify({'error': 'relation_ids is required'}), 400
+
+    deleted_ids = []
+    try:
+        for relation_id in relation_ids:
+            user_relation = UserRelation.query.filter_by(u_id=user_id, r_id=relation_id).first()
+            if user_relation is None:
+                continue
+
+            db.session.delete(user_relation)
+            remaining_users = UserRelation.query.filter_by(r_id=relation_id).count()
+            if remaining_users == 0:
+                relation = Relation.query.get(relation_id)
+                if relation is not None:
+                    db.session.delete(relation)
+
+            deleted_ids.append(relation_id)
+
+        db.session.commit()
+        return jsonify({'success': True, 'deleted_ids': deleted_ids})
+    except Exception as exc:
+        db.session.rollback()
+        return jsonify({'error': str(exc)}), 500
+
+
 @api_bp.post('/selection')
 def process_selection():
     data = _json_data()

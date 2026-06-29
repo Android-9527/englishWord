@@ -27,7 +27,7 @@ interface ApiListResponse<T> {
   items: T[];
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://136.117.65.65/englishword/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:5001/api';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -61,6 +61,13 @@ export function createUser(userId: string) {
 export function getRelations(userId: string) {
   const query = new URLSearchParams({ u_id: userId }).toString();
   return request<ApiListResponse<RelationItem>>(`/relations?${query}`);
+}
+
+export function deleteRelation(relationIds: number[], userId: string) {
+  return request<{ success: boolean; deleted_ids: number[] }>('/relations/delete', {
+    method: 'POST',
+    body: JSON.stringify({ relation_ids: relationIds, u_id: userId })
+  });
 }
 
 export function processSelection(selectionText: string, sentence: string, source_url: string, userId: string) {
